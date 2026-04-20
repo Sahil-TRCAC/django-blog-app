@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Search Results - My Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-search"></i> Search Results for "{{ query }}"
+                </h3>
+                <p class="mb-0 mt-2">Found {{ posts|length }} result{{ posts|length|pluralize }}</p>
+            </div>
+        </div>
+        
+        {% if posts %}
+            {% for post in posts %}
+                <article class="card mb-4 shadow-sm">
+                    {% if post.featured_image %}
+                        <img src="{{ post.featured_image.url }}" class="card-img-top" style="height: 300px; object-fit: cover;" alt="{{ post.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
+                                {{ post.title }}
+                            </a>
+                        </h2>
+                        <p class="text-muted">
+                            <i class="fas fa-user"></i> By {{ post.author }}
+                            | <i class="fas fa-calendar"></i> {{ post.published_date|date:"F d, Y" }}
+                            {% if post.category %}
+                                | <i class="fas fa-folder"></i> {{ post.category.name }}
+                            {% endif %}
+                        </p>
+                        <p class="card-text">{{ post.content|truncatewords:50|safe }}</p>
+                        <a href="{{ post.get_absolute_url }}" class="btn btn-primary">Read More</a>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4>No results found for "{{ query }}"</h4>
+                    <p class="text-muted">Try searching with different keywords or check your spelling.</p>
+                    <a href="{% url 'blog-home' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-home"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1&q={{ query }}">First</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">Previous</a></li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}">Last</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{{ post.title }} - My Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <article class="card shadow-sm mb-4">
+            {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" class="card-img-top" style="height: 400px; object-fit: cover;" alt="{{ post.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h1 class="card-title">{{ post.title }}</h1>
+                <div class="text-muted mb-3">
+                    <i class="fas fa-user"></i> By <a href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                    | <i class="fas fa-calendar"></i> {{ post.published_date|date:"F d, Y" }}
+                    {% if post.category %}
+                        | <i class="fas fa-folder"></i> <a href="{% url 'blog-category' post.category.slug %}">{{ post.category.name }}</a>
+                    {% endif %}
+                </div>
+                
+                <div class="post-content" style="line-height: 1.8;">
+                    {{ post.content|safe|linebreaks }}
+                </div>
+                
+                {% if post.author == user %}
+                    <div class="mt-4">
+                        <a href="{% url 'post-update' post.slug %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit Post
+                        </a>
+                        <a href="{% url 'post-delete' post.slug %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Delete Post
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </article>
+        
+        <!-- Comments Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-comments"></i> Comments ({{ comments.count }})</h4>
+            </div>
+            <div class="card-body">
+                {% if comments %}
+                    {% for comment in comments %}
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="comment-meta">
+                                <strong>{{ comment.name }}</strong> 
+                                <span class="text-muted">on {{ comment.created_date|date:"F d, Y" }}</span>
+                            </div>
+                            <p class="mt-2">{{ comment.content|linebreaks }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center">No comments yet. Be the first to comment!</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Comment Form -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-pen"></i> Leave a Comment</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ comment_form|crispy }}
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-paper-plane"></i> Post Comment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}About - My Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-info-circle"></i> About This Blog</h3>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-blog fa-4x text-primary"></i>
+                </div>
+                <h4>Welcome to My Django Blog!</h4>
+                <p>This is a modern, feature-rich blog application built with Django framework.</p>
+                
+                <h5 class="mt-4">Features:</h5>
+                <ul>
+                    <li>User Registration and Authentication</li>
+                    <li>Create, Read, Update, and Delete Blog Posts</li>
+                    <li>Post Categories for Better Organization</li>
+                    <li>Comment System with Moderation</li>
+                    <li>User Profiles with Avatars</li>
+                    <li>Search Functionality</li>
+                    <li>Responsive Design with Bootstrap 5</li>
+                </ul>
+                
+                <div class="alert alert-info mt-4">
+                    <i class="fas fa-heart text-danger"></i> Thank you for visiting our blog!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
